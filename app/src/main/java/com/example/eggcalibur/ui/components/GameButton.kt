@@ -13,6 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,6 +27,7 @@ fun GameButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val btnFont = FontFamily(Font(R.font.montserrat_bold))
     // Box дозволяє накласти Текст поверх Картинки кнопки
     Box(
         contentAlignment = Alignment.Center,
@@ -46,7 +49,8 @@ fun GameButton(
             text = text,
             color = Color(0xFFFFC300),
             fontSize = 22.sp,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            fontFamily = btnFont
         )
     }
 }

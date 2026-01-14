@@ -41,8 +41,15 @@ class MainActivity : ComponentActivity() {
                     }
 
                     // ГРА
-                    composable("game") {
-                        GameScreen()
+                    composable("game") {GameScreen(
+                        onExitToMenu = {
+                            // Ця команда повертає користувача назад у меню
+                            navController.navigate("menu") {
+                                // Видаляємо гру з історії, щоб кнопка "Назад" не повертала в гру
+                                popUpTo("menu") { inclusive = true }
+                            }
+                        }
+                    )
                     }
 
                     // Тут пізніше додамо "records" і "privacy"

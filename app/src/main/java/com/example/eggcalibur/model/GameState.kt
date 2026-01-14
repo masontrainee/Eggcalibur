@@ -8,7 +8,8 @@ data class GameState(
     val isFacingRight: Boolean = true,
     val isGameOver: Boolean = false,
     val score: Int = 0,
-    val platforms: List<Platform> = emptyList()
+    val platforms: List<Platform> = emptyList(),
+    val isPaused: Boolean = false
 )
 
 data class Platform(
