@@ -15,19 +15,15 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.eggcalibur.R
 import kotlinx.coroutines.delay
 
@@ -53,7 +49,7 @@ fun LoadingScreen(onLoadingFinished: () -> Unit) {
 
     Box(modifier = Modifier.fillMaxSize()) {
 
-        // ФОН (Включає курку, якщо вона намальована на ньому)
+        // ФОН
         Image(
             painter = painterResource(id = R.drawable.bg_menu),
             contentDescription = null,
@@ -83,17 +79,18 @@ fun LoadingScreen(onLoadingFinished: () -> Unit) {
                 painter = painterResource(id = R.drawable.ic_loading_gear),
                 contentDescription = "Loading",
                 modifier = Modifier
-                    .size(50.dp)
+                    .width(125.dp)
+                    .height(17.dp)
                     .rotate(angle) // Анімація тут
             )
 
             Spacer(modifier = Modifier.height(10.dp))
 
             Image(
-                painter = painterResource(id = R.drawable.text_loading), // Твій новий файл
+                painter = painterResource(id = R.drawable.text_loading),
                 contentDescription = "Loading Text",
-                contentScale = ContentScale.Fit, // Зберігає пропорції
-                modifier = Modifier.width(120.dp) // Можеш підлаштувати ширину напису
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.width(120.dp)
             )
         }
     }

@@ -1,3 +1,5 @@
+@file:Suppress("COMPOSE_APPLIER_CALL_MISMATCH")
+
 package com.example.eggcalibur.ui.screen
 
 import androidx.compose.foundation.Canvas
@@ -6,16 +8,19 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,92 +33,91 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.eggcalibur.R
 import com.example.eggcalibur.model.GameState
+import com.example.eggcalibur.ui.components.BackButton
 import com.example.eggcalibur.ui.components.GameButton
 import com.example.eggcalibur.viewmodel.GameViewModel
 
 @Composable
 fun GameScreen(
-    viewModel: GameViewModel = viewModel(),
+    viewModel: GameViewModel,
     onExitToMenu: () -> Unit
 ) {
     val state by viewModel.gameState.collectAsState()
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val density = LocalDensity.current
 
-        // ==========================================
-        // ШАР 1: ГРА (GAMEPLAY)
-        // ==========================================
-        GameContent(
-            state = state,
-            onJoystickMoved = { x, y -> viewModel.onJoystickMoved(x, y) }
-        )
+        // Конвертуємо dp (одиниці екрану) в px (пікселі для фізики)
+        val screenWidthPx = with(density) { maxWidth.toPx() }
+        val screenHeightPx = with(density) { maxHeight.toPx() }
 
-        // ==========================================
-        // ШАР 2: КНОПКА ПАУЗИ (В ГРІ)
-        // ==========================================
-        if (!state.isPaused && !state.isGameOver) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 40.dp, start = 24.dp),
-                contentAlignment = Alignment.TopStart
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.btn_pause_icon),
-                    contentDescription = "Pause",
+        LaunchedEffect(screenWidthPx, screenHeightPx) {
+            viewModel.initGame(screenWidthPx, screenHeightPx)
+        }
+
+        Box(modifier = Modifier.fillMaxSize()) {
+
+            GameContent(
+                state = state,
+                screenWidthPx = screenWidthPx,
+                onJoystickMoved = { x, y -> viewModel.onJoystickMoved(x, y) }
+            )
+
+            if (!state.isPaused && !state.isGameOver) {
+                androidx.compose.foundation.layout.Row(
                     modifier = Modifier
-                        .size(64.dp)
-                        .clickable { viewModel.togglePause() }
-                )
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp)
+                        .statusBarsPadding()
+                        .padding(top = 16.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+
+                    // Кнопка Паузи
+                    Image(
+                        painter = painterResource(id = R.drawable.btn_pause_icon),
+                        contentDescription = "Pause",
+                        modifier = Modifier
+                            .size(64.dp)
+                            .clickable { viewModel.togglePause() }
+                    )
+
+                    // Рахунок
+                    Box(contentAlignment = Alignment.Center) {
+                        Image(
+                            painter = painterResource(id = R.drawable.bg_score),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .width(106.dp)
+                                .height(55.dp),
+                            contentScale = ContentScale.FillBounds
+                        )
+                        Text(
+                            text = "${state.score}M",
+                            fontSize = 22.sp,
+                            color = Color(0xFF562716),
+                            fontFamily = FontFamily(Font(R.font.montserrat_extrabold))
+                        )
+                    }
+                }
             }
         }
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(top = 40.dp, end = 24.dp), // Відступ справа
-            contentAlignment = Alignment.TopEnd // Притискаємо вправо
-        ) {
-            Box(
-                contentAlignment = Alignment.Center
-            ) {
-                // 1. Картинка-фон (табличка)
-                Image(
-                    painter = painterResource(id = R.drawable.bg_score), // Та сама картинка, що і в Game Over
-                    contentDescription = null,
-                    modifier = Modifier
-                        .width(120.dp) // Трохи менша, ніж у Game Over
-                        .height(50.dp),
-                    contentScale = ContentScale.FillBounds
-                )
-
-                // 2. Текст рахунку (по центру картинки)
-                Text(
-                    text = "${state.score}M",
-                    fontSize = 22.sp, // Розмір шрифту
-                    color = Color(0xFF562716), // Твій коричневий колір
-                    modifier = Modifier.align(Alignment.Center),
-                    fontFamily = FontFamily(Font(R.font.montserrat_extrabold))
-                )
-            }
-        }
-    }
         // ==========================================
-        // ШАР 3: ЕКРАН ПАУЗИ (PAUSE MENU)
+        // ШАР 3: ЕКРАН ПАУЗИ
         // ==========================================
         if (state.isPaused) {
-            // Фон меню
             Image(
                 painter = painterResource(id = R.drawable.bg_menu),
                 contentDescription = null,
@@ -121,13 +125,11 @@ fun GameScreen(
                 modifier = Modifier.fillMaxSize()
             )
 
-            // Вміст по центру
             Column(
                 modifier = Modifier.fillMaxSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
-                // Картинка "PAUSE"
                 Image(
                     painter = painterResource(id = R.drawable.header_pause),
                     contentDescription = "Pause Header",
@@ -136,23 +138,17 @@ fun GameScreen(
                 )
 
                 Spacer(modifier = Modifier.height(30.dp))
-
-                // Кнопка Resume
                 GameButton(text = "Resume", onClick = { viewModel.togglePause() })
-
                 Spacer(modifier = Modifier.height(16.dp))
-
-                // Кнопка Exit (Широка синя кнопка, як на макеті)
                 GameButton(text = "Exit", onClick = onExitToMenu)
             }
         }
 
         // ==========================================
-        // ШАР 4: ЕКРАН ПРОГРАШУ (GAME OVER)
+        // ШАР 4: ЕКРАН ПРОГРАШУ
         // ==========================================
         if (state.isGameOver) {
             Box(modifier = Modifier.fillMaxSize()) {
-                // 1. Фон
                 Image(
                     painter = painterResource(id = R.drawable.bg_menu),
                     contentDescription = null,
@@ -160,27 +156,15 @@ fun GameScreen(
                     modifier = Modifier.fillMaxSize()
                 )
 
-                // 2. Кнопка "НАЗАД" (Жовта стрілка зліва зверху)
-                Box(
-                    modifier = Modifier
-                        .align(Alignment.TopStart)
-                        .padding(top = 40.dp, start = 24.dp)
-                ) {
-                    Image(
-                        painter = painterResource(id = R.drawable.btn_back),
-                        contentDescription = "Exit",
-                        modifier = Modifier
-                            .size(64.dp)
-                            .clickable { onExitToMenu() }
-                    )
-                }
+                BackButton(
+                    onBack = onExitToMenu,
+                    modifier = Modifier.align(Alignment.TopStart) // Адаптивно притискаємо вліво-вверх
+                )
 
-                // 3. Центр (Заголовок, Рахунок, Play Again)
                 Column(
                     modifier = Modifier.align(Alignment.Center),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    // Картинка "GAME OVER"
                     Image(
                         painter = painterResource(id = R.drawable.header_gameover),
                         contentDescription = "Game Over Header",
@@ -188,9 +172,8 @@ fun GameScreen(
                         contentScale = ContentScale.Fit
                     )
 
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(25.dp))
 
-                    // Табличка з рахунком
                     Box(contentAlignment = Alignment.Center) {
                         Image(
                             painter = painterResource(id = R.drawable.bg_score),
@@ -202,26 +185,22 @@ fun GameScreen(
                             text = "${state.score}M",
                             fontSize = 25.sp,
                             fontFamily = FontFamily(Font(R.font.montserrat_extrabold)),
-                            color = Color(0xFF562716) // Коричневий колір тексту
+                            color = Color(0xFF562716)
                         )
                     }
 
                     Spacer(modifier = Modifier.height(30.dp))
-
-                    // Кнопка Play Again
                     GameButton(text = "Play Again", onClick = { viewModel.restartGame() })
                 }
             }
         }
     }
+}
 
-
-// ==========================================
-// ЛОГІКА МАЛЮВАННЯ (З форматуванням)
-// ==========================================
 @Composable
 fun GameContent(
     state: GameState,
+    screenWidthPx: Float,
     onJoystickMoved: (Float, Float) -> Unit
 ) {
     val bgImage = ImageBitmap.imageResource(id = R.drawable.bg_game)
@@ -230,8 +209,9 @@ fun GameContent(
     val platformLongImg = ImageBitmap.imageResource(id = R.drawable.platform_long)
     val platformShortImg = ImageBitmap.imageResource(id = R.drawable.platform_short)
 
-    val playerWidthPx = 100f
-    val playerHeightPx = 180f
+
+    val playerWidthPx = 130f
+    val playerHeightPx = 200f
     var touchStartPos by remember { mutableStateOf(Offset.Zero) }
 
     Canvas(
@@ -263,7 +243,8 @@ fun GameContent(
 
         // 2. ПЛАТФОРМИ
         state.platforms.forEach { platform ->
-            val platformImg = if (platform.width > 199f) {
+            val threshold = screenWidthPx * 0.15f
+            val platformImg = if (platform.width > threshold) {
                 platformLongImg
             } else platformShortImg
 
