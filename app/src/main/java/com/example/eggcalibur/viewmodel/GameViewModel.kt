@@ -97,7 +97,7 @@ class GameViewModel(private val scoreDao: ScoreDao) : ViewModel() {
         _gameState.update {
             it.copy(
                 playerX = startX,
-                playerY = startY - (screenHeight * 0.15f), // Трохи вище платформи
+                playerY = startY - (screenHeight * 0.15f),
                 playerVelocityY = 0f,
                 playerVelocityX = 0f,
                 isGameOver = false,
@@ -111,7 +111,7 @@ class GameViewModel(private val scoreDao: ScoreDao) : ViewModel() {
         if (isScoreSaved) return
         isScoreSaved = true
         viewModelScope.launch {
-            val currentDate = SimpleDateFormat("dd.MM HH:mm", Locale.getDefault()).format(Date())
+            val currentDate = SimpleDateFormat("dd.MM", Locale.getDefault()).format(Date())
             scoreDao.insert(ScoreRecord(score = score, date = currentDate))
         }
     }
@@ -129,9 +129,8 @@ class GameViewModel(private val scoreDao: ScoreDao) : ViewModel() {
 
     private fun updatePhysics() {
         _gameState.update { state ->
-            // 1. Рух по X з телепортацією (стінки)
             var newX = state.playerX + state.playerVelocityX
-            val playerRadius = screenWidth * 0.05f // Розмір гравця приблизно 5% екрану
+            val playerRadius = screenWidth * 0.05f
 
             var newFacingRight = state.isFacingRight
             if (state.playerVelocityX > 0.1f) newFacingRight = true

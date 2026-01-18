@@ -12,6 +12,6 @@ interface ScoreDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(record: ScoreRecord)
 
-    @Query("SELECT * FROM scores ORDER BY score DESC LIMIT 10")
+    @Query("SELECT * FROM scores ORDER BY score DESC LIMIT 6")
     fun getTopScores(): Flow<List<ScoreRecord>>
 }

@@ -29,18 +29,14 @@ import com.example.eggcalibur.ui.components.RecordItem
 
 @Composable
 fun RecordsScreen(onBack: () -> Unit) {
-    // 1. Отримуємо доступ до бази даних
     val context = LocalContext.current
     val app = context.applicationContext as GameApplication
     val dao = app.database.scoreDao()
 
-    // 2. Читаємо список рекордів (Flow перетворюється на State)
     val records by dao.getTopScores().collectAsState(initial = emptyList())
 
-    // Головний контейнер
     Box(modifier = Modifier.fillMaxSize()) {
 
-        // ШАР 1: Фон
         Image(
             painter = painterResource(id = R.drawable.bg_menu2),
             contentDescription = null,
@@ -48,15 +44,12 @@ fun RecordsScreen(onBack: () -> Unit) {
             modifier = Modifier.fillMaxSize()
         )
 
-        // ШАР 2: Основний контент
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Відступ зверху для заголовка
             Spacer(modifier = Modifier.fillMaxHeight(0.15f))
 
-            // Картинка-Заголовок "RECORDS"
             Image(
                 painter = painterResource(id = R.drawable.header_records),
                 contentDescription = "Records Header",
@@ -64,14 +57,14 @@ fun RecordsScreen(onBack: () -> Unit) {
                 modifier = Modifier.width(130.dp).height(18.dp)
             )
             Spacer(modifier = Modifier.height(20.dp))
-            // Список рекордів
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f) // Займає все вільне місце, що залишилось
-                    .padding(horizontal = 24.dp), // Відступи з боків
-                verticalArrangement = Arrangement.spacedBy(16.dp), // Відстань між плашками
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 50.dp) // Відступ знизу, щоб не перекривалось куркою
+                    .weight(1f)
+                    .padding(horizontal = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                contentPadding = androidx.compose.foundation.layout.PaddingValues(bottom = 50.dp)
             ) {
                 itemsIndexed(records) { index, record ->
                     RecordItem(record = record)
@@ -79,7 +72,6 @@ fun RecordsScreen(onBack: () -> Unit) {
             }
         }
 
-        // ШАР 3: Кнопка Назад
         BackButton(
             onBack = onBack,
             modifier = Modifier.align(Alignment.TopStart)

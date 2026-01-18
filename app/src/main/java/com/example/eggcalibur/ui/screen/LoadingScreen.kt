@@ -30,13 +30,11 @@ import kotlinx.coroutines.delay
 @Composable
 fun LoadingScreen(onLoadingFinished: () -> Unit) {
 
-    // 1. Таймер на 3 секунди
     LaunchedEffect(Unit) {
         delay(3000)
         onLoadingFinished()
     }
 
-    // 2. Анімація обертання
     val infiniteTransition = rememberInfiniteTransition(label = "gear_spin")
     val angle by infiniteTransition.animateFloat(
         initialValue = 0f,
@@ -49,7 +47,6 @@ fun LoadingScreen(onLoadingFinished: () -> Unit) {
 
     Box(modifier = Modifier.fillMaxSize()) {
 
-        // ФОН
         Image(
             painter = painterResource(id = R.drawable.bg_menu),
             contentDescription = null,
@@ -57,7 +54,6 @@ fun LoadingScreen(onLoadingFinished: () -> Unit) {
             modifier = Modifier.fillMaxSize()
         )
 
-        // ЛОГОТИП
         Image(
             painter = painterResource(id = R.drawable.logo),
             contentDescription = "Logo",
@@ -67,21 +63,19 @@ fun LoadingScreen(onLoadingFinished: () -> Unit) {
                 .size(300.dp)
         )
 
-        // БЛОК ЗАВАНТАЖЕННЯ (Шестерня + Текст)
         Column(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .padding(bottom = 60.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Шестерня
             Image(
                 painter = painterResource(id = R.drawable.ic_loading_gear),
                 contentDescription = "Loading",
                 modifier = Modifier
                     .width(125.dp)
                     .height(17.dp)
-                    .rotate(angle) // Анімація тут
+                    .rotate(angle)
             )
 
             Spacer(modifier = Modifier.height(10.dp))

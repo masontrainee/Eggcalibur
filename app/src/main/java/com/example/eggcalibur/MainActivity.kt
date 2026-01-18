@@ -9,7 +9,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.eggcalibur.ui.screen.GameScreen
+import com.example.eggcalibur.ui.screen.game.GameScreen
 import com.example.eggcalibur.ui.screen.LoadingScreen
 import com.example.eggcalibur.ui.screen.MenuScreen
 import com.example.eggcalibur.ui.screen.PrivacyPolicyScreen
@@ -40,9 +40,21 @@ class MainActivity : ComponentActivity() {
 
                     composable("menu") {
                         MenuScreen(
-                            onPlayClick = { navController.navigate("game") },
-                            onRecordsClick = { navController.navigate("records") },
-                            onPrivacyClick = { navController.navigate("privacy") }
+                            onPlayClick = {
+                                navController.navigate("game") {
+                                    launchSingleTop = true
+                                }
+                            },
+                            onRecordsClick = {
+                                navController.navigate("records") {
+                                    launchSingleTop = true
+                                }
+                            },
+                            onPrivacyClick = {
+                                navController.navigate("privacy") {
+                                    launchSingleTop = true
+                                }
+                            }
                         )
                     }
 

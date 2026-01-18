@@ -26,7 +26,7 @@ import com.example.eggcalibur.data.ScoreRecord
 @Composable
 fun RecordItem(
     record: ScoreRecord,
-    modifier: Modifier = Modifier // Корисно додати modifier, щоб можна було керувати відступами ззовні
+    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
@@ -34,7 +34,6 @@ fun RecordItem(
             .height(80.dp),
         contentAlignment = Alignment.Center
     ) {
-        // 1. Картинка-фон плашки
         Image(
             painter = painterResource(id = R.drawable.bg_record_item),
             contentDescription = null,
@@ -42,7 +41,6 @@ fun RecordItem(
             contentScale = ContentScale.FillBounds
         )
 
-        // 2. Текст (Дата і Рахунок)
         Row(
             modifier = Modifier
                 .fillMaxSize()
@@ -50,7 +48,6 @@ fun RecordItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            // Дата
             Text(
                 text = record.date,
                 fontFamily = FontFamily(Font(R.font.montserrat_extrabold)),
@@ -59,7 +56,6 @@ fun RecordItem(
                 color = Color(0xFF562716)
             )
 
-            // Рахунок
             Text(
                 text = "${record.score}M",
                 fontFamily = FontFamily(Font(R.font.montserrat_extrabold)),

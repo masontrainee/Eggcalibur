@@ -24,7 +24,6 @@ fun PrivacyPolicyScreen(onBack: () -> Unit) {
     val fontBold = FontFamily(Font(R.font.montserrat_bold))
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // 1. Фон
         Image(
             painter = painterResource(id = R.drawable.bg_menu2),
             contentDescription = null,

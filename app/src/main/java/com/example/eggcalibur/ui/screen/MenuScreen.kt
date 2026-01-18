@@ -27,15 +27,13 @@ fun MenuScreen(
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
 
-        // 1. ФОНОВЕ ЗОБРАЖЕННЯ (Замок)
         Image(
             painter = painterResource(id = R.drawable.bg_menu),
             contentDescription = null,
-            contentScale = ContentScale.Crop, // Розтягує на весь екран
+            contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()
         )
 
-        // 2. КНОПКИ (По центру)
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -44,7 +42,6 @@ fun MenuScreen(
             verticalArrangement = Arrangement.Center
         ) {
 
-            // Кнопки (використовуємо наш компонент)
             GameButton(text = "Start", onClick = onPlayClick)
 
             Spacer(modifier = Modifier.height(16.dp))
